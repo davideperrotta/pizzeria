@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzeria - Ordini</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .nav-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            color: #ff6b6b;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+        }
+
+        .controls {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #00d2ff 0%, #3a47d5 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .stat-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .orders-container {
+            padding: 30px;
+        }
+
+        .no-orders {
+            text-align: center;
+            color: #666;
+            font-size: 1.2em;
+            padding: 60px 20px;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .order-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .order-header {
+            background: linear-gradient(135deg, #f8b500 0%, #fceabb 100%);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .order-info {
+            flex: 1;
+        }
+
+        .order-id {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .order-customer {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .order-time {
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .order-status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+
+        .status-in-attesa {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-in-preparazione {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .status-pronto {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-consegnato {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .order-body {
+            padding: 20px;
+        }
+
+        .pizzas-list {
+            margin-bottom: 20px;
+        }
+
+        .pizza-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .pizza-item:last-child {
+            border-bottom: none;
+        }
+
+        .pizza-info {
+            flex: 1;
+        }
+
+        .pizza-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .pizza-ingredients {
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+            margin-top: 3px;
+        }
+
+        .pizza-quantity {
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .pizza-price {
+            font-weight: bold;
+            color: #d63031;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 2px solid #eee;
+        }
+
+        .order-total {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #d63031;
+        }
+
+        .status-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .status-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85em;
+            transition: transform 0.3s;
+        }
+
+        .status-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-prepara {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-pronto {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-consegna {
+            background: #dc3545;
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ff6b6b;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .stats {
+                justify-content: center;
+            }
+
+            .order-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .status-controls {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/index.html" class="nav-link">← Torna al Menu</a>
+    
+    <div class="container">
+        <header>
+            <h1>📋 Ordini Pizzeria</h1>
+            <p>Gestisci e visualizza tutti gli ordini</p>
+        </header>
+
+        <div class="controls">
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-label">Ordini Totali</div>
+                    <div class="stat-value" id="totalOrders">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">In Attesa</div>
+                    <div class="stat-value" id="pendingOrders">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Fatturato</div>
+                    <div class="stat-value" id="totalRevenue">€0.00</div>
+                </div>
+            </div>
+            <button class="refresh-btn" onclick="loadOrders()">🔄 Aggiorna</button>
+        </div>
+
+        <div class="orders-container">
+            <div id="ordersList">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Caricamento ordini...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        let orders = [];
+
+        // Carica gli ordini dall'API statica
+        async function loadOrders() {
+            try {
+                orders = await window.pizzaAPI.getOrders();
+                renderOrders();
+                updateStats();
+            } catch (error) {
+                console.error('Errore nel caricamento degli ordini:', error);
+                document.getElementById('ordersList').innerHTML = 
+                    '<div class="no-orders">Errore nel caricamento degli ordini</div>';
+            }
+        }
+
+        // Renderizza gli ordini
+        function renderOrders() {
+            const ordersList = document.getElementById('ordersList');
+            
+            if (orders.length === 0) {
+                ordersList.innerHTML = '<div class="no-orders">Nessun ordine presente</div>';
+                return;
+            }
+
+            // Ordina per timestamp (più recenti prima)
+            const sortedOrders = [...orders].sort((a, b) => 
+                new Date(b.timestamp) - new Date(a.timestamp)
+            );
+
+            ordersList.innerHTML = sortedOrders.map(order => createOrderCard(order)).join('');
+        }
+
+        // Crea la card di un ordine
+        function createOrderCard(order) {
+            const date = new Date(order.timestamp);
+            const formattedTime = date.toLocaleString('it-IT', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            const statusClass = `status-${order.status.replace(' ', '-')}`;
+            const statusText = order.status.charAt(0).toUpperCase() + order.status.slice(1);
+
+            const pizzasHtml = order.pizzas.map(pizza => `
+                <div class="pizza-item">
+                    <div class="pizza-info">
+                        <div class="pizza-name">${pizza.name}</div>
+                        <div class="pizza-ingredients">${pizza.ingredients.join(', ')}</div>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <span class="pizza-quantity">x${pizza.quantity}</span>
+                        <span class="pizza-price">€${(pizza.price * pizza.quantity).toFixed(2)}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            const statusButtons = getStatusButtons(order);
+
+            return `
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-info">
+                            <div class="order-id">Ordine #${order.id}</div>
+                            <div class="order-customer">Cliente: ${order.customerName}</div>
+                            <div class="order-time">${formattedTime}</div>
+                        </div>
+                        <div class="order-status ${statusClass}">${statusText}</div>
+                    </div>
+                    <div class="order-body">
+                        <div class="pizzas-list">
+                            ${pizzasHtml}
+                        </div>
+                        <div class="order-footer">
+                            <div class="order-total">Totale: €${order.total.toFixed(2)}</div>
+                            <div class="status-controls">
+                                ${statusButtons}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Ottieni i pulsanti di stato in base allo stato attuale
+        function getStatusButtons(order) {
+            switch(order.status) {
+                case 'in attesa':
+                    return `
+                        <button class="status-btn btn-prepara" onclick="updateOrderStatus(${order.id}, 'in preparazione')">
+                            In Preparazione
+                        </button>
+                    `;
+                case 'in preparazione':
+                    return `
+                        <button class="status-btn btn-pronto" onclick="updateOrderStatus(${order.id}, 'pronto')">
+                            Pronto
+                        </button>
+                    `;
+                case 'pronto':
+                    return `
+                        <button class="status-btn btn-consegna" onclick="updateOrderStatus(${order.id}, 'consegnato')">
+                            Consegnato
+                        </button>
+                    `;
+                case 'consegnato':
+                    return '<span style="color: #28a745; font-weight: bold;">✓ Completato</span>';
+                default:
+                    return '';
+            }
+        }
+
+        // Aggiorna lo stato di un ordine
+        async function updateOrderStatus(orderId, newStatus) {
+            try {
+                await window.pizzaAPI.updateOrderStatus(orderId, newStatus);
+                // Ricarica gli ordini
+                loadOrders();
+            } catch (error) {
+                console.error('Errore:', error);
+                alert('Errore nell\'aggiornamento dello stato');
+            }
+        }
+
+        // Aggiorna le statistiche
+        function updateStats() {
+            const totalOrders = orders.length;
+            const pendingOrders = orders.filter(o => o.status === 'in attesa').length;
+            const totalRevenue = orders
+                .filter(o => o.status === 'consegnato')
+                .reduce((sum, order) => sum + order.total, 0);
+
+            document.getElementById('totalOrders').textContent = totalOrders;
+            document.getElementById('pendingOrders').textContent = pendingOrders;
+            document.getElementById('totalRevenue').textContent = `€${totalRevenue.toFixed(2)}`;
+        }
+
+        // Auto-refresh ogni 30 secondi
+        setInterval(loadOrders, 30000);
+
+        // Caricamento iniziale
+        loadOrders();
+    </script>
+</body>
+</html>
