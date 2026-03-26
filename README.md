@@ -4,7 +4,9 @@ Applicazione web per ordinare pizze online, sviluppata con HTML, CSS e JavaScrip
 
 ## 🚀 Demo Live
 
-L'applicazione è disponibile online su: **https://davideperrotta.github.io/pizzeria/**
+**Vai alla pagina principale**: [index.html](./index.html)
+
+L'applicazione è disponibile online su: **https://davideperrotta.github.io/pizzeria/index.html**
 
 ## 📋 Caratteristiche
 
